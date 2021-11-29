@@ -24,7 +24,7 @@ public class Main {
 		long start = System.currentTimeMillis();
 		
 		GA_Permutation ga_Permutation = new GA_Permutation(qkValueWeight, qkPairValue, qkCapacity, numObjects);
-		ga_Permutation.runGA(50);
+		ga_Permutation.runGA(1);
 		
 		long finished = System.currentTimeMillis();
 		double timeElapsed = (finished - start) / (double)1000;

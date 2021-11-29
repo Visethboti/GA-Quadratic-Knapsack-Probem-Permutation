@@ -17,7 +17,7 @@ public class GA_Permutation {
 	private int numGenerationsToRun;
 	
 	// Parameters
-	private final int popsSize = 1;
+	private final int popsSize = 100;
 	private final double parentSizePercentage = 0.5; 
 	private final double offspringSizePercentage = 0.98;
 	private final double elitismSizePercentage = 0.02;
@@ -76,10 +76,11 @@ public class GA_Permutation {
 		
 		
 		
-		initialization();
-		printPopulations();
+		//initialization();
+		//fitnessCalculation();
+		//printPopulations();
 		
-		/*
+		
 		int genCounter = 0;
 		
 		System.out.println("GA_Binary: Start Running GA");
@@ -108,7 +109,7 @@ public class GA_Permutation {
 			printFitnessStat();
 		}while(genCounter < numGenerationsToRun);
 		System.out.println("GA_Binary: Finished Generational");
-		*/
+		
 	}
 	
 	
@@ -128,7 +129,7 @@ public class GA_Permutation {
 		}
 	}
 	
-	/*
+	
 	private void parentSelection(){ // K-tournament Selection
 		// clear Parent Pool
 		for(int i = 0; i < parentSize; i++) {
@@ -158,24 +159,22 @@ public class GA_Permutation {
 	
 	private void crossOver(){
 		int randomNum1, randomNum2, randomPoint;
-		char[] newOffspring = new char[qkNumObjects];
+		int[] newOffspring = new int[qkNumObjects];
 		for(int i = 0; i < offspringSize; i++) { // For each num of off spring required
+			randomNum1 = random.nextInt(parentSize); // Randomly pick two parent from the parentPool that is not the same
 			do {
-				randomNum1 = random.nextInt(parentSize); // Randomly pick two parent from the parentPool that is not the same
-				do {
-					randomNum2 = random.nextInt(parentSize);
-				}while(randomNum1 == randomNum2);
-				
-				// One point crossover
-				randomPoint = random.nextInt(qkNumObjects-1) + 1; // randomPoint between 1 to number of objects
-				
-				for(int j = 0; j < randomPoint; j++) {
-					newOffspring[j] = populations[parentPool[randomNum1]][j];
-				}
-				for(int j = randomPoint; j < qkNumObjects; j++) {
-					newOffspring[j] = populations[parentPool[randomNum2]][j];
-				}
-			}while(getFitness(newOffspring) == 0);
+				randomNum2 = random.nextInt(parentSize);
+			}while(randomNum1 == randomNum2);
+			
+			// One point crossover
+			randomPoint = random.nextInt(qkNumObjects-1) + 1; // randomPoint between 1 to number of objects
+			
+			for(int j = 0; j < randomPoint; j++) {
+				newOffspring[j] = populations[parentPool[randomNum1]][j];
+			}
+			for(int j = randomPoint; j < qkNumObjects; j++) {
+				newOffspring[j] = populations[parentPool[randomNum2]][j];
+			}
 			
 			// Add to offspring Pool
 			for(int j = 0; j < qkNumObjects; j++) {
@@ -183,6 +182,7 @@ public class GA_Permutation {
 			}
 		}
 	}
+	
 	
 	private void elitism() {
 		int[] elitismIndex = new int[elitismSize];
@@ -245,10 +245,9 @@ public class GA_Permutation {
 	
 	private void mutation(){
 		double randomValue;
-		int randomBit;
-		int counter, currentCFitness;
-		char[] currentChromosome = new char[qkNumObjects];
-		for(int i = 0; i < popsSize; i++) {
+		int randomBit1, randomBit2, temp;
+		int[] currentChromosome = new int[qkNumObjects];
+		for(int i = 0; i < popsSize; i++) { // for each pop
 			randomValue = random.nextDouble();
 			if(randomValue <= mutationProbality) {
 				// take current chromosome from population
@@ -256,49 +255,52 @@ public class GA_Permutation {
 					currentChromosome[j] = populations[i][j];
 				}
 				
-				counter = 0;
-				currentCFitness = 0;
+				randomBit1 = random.nextInt(qkNumObjects);
 				do {
-					randomBit = random.nextInt(qkNumObjects);
-					if(currentChromosome[randomBit] == '1')
-						currentChromosome[randomBit] = '0';
-					else
-						currentChromosome[randomBit] = '1';
-					counter++;
-					currentCFitness = getFitness(currentChromosome);
-				}while(counter < qkNumObjects && currentCFitness == 0);
+					randomBit2 = random.nextInt(qkNumObjects);
+				}while(randomBit1 == randomBit2);
+				
+				//swap
+				temp = currentChromosome[randomBit1];
+				currentChromosome[randomBit1] = currentChromosome[randomBit2];
+				currentChromosome[randomBit2] = temp;
 					
 				// Replace the pop with currentChromosome
-				if(currentCFitness > 0) {
-					for(int j = 0; j < qkNumObjects; j++) {
-						populations[i][j] = currentChromosome[j];
-					}
+				for(int j = 0; j < qkNumObjects; j++) {
+					populations[i][j] = currentChromosome[j];
 				}
 			}
 		}
 	}
-	*/
+	
 	// GA Untilities Methods
-	private int getFitness(char[] chromosome) {
+	private int getFitness(int[] chromosome) {
 		int totalWieght = 0;
 		int totalValue = 0;
+		int counter = 0;
+		
+		ArrayList<Integer> array = new ArrayList<Integer>();
+		
 		for(int i = 0; i < qkNumObjects; i++) {
-			if(chromosome[i] == '1') {
-				totalValue += qkValueWeight[0][i];
-				totalWieght += qkValueWeight[1][i];
-				
-				// Add up the pair value with the other object if they are choosen too
-				for(int j = i+1; j < qkNumObjects; j++) {
-					if(chromosome[j] == '1')
-						totalValue += qkPairValue[i][j];
-				}
+			if(totalWieght + qkValueWeight[1][chromosome[i]] <= qkCapacity) {
+				totalValue += qkValueWeight[0][chromosome[i]];
+				totalWieght += qkValueWeight[1][chromosome[i]];
+				counter++;
+				array.add(chromosome[i]);
+			}
+			else 
+				break;
+		}
+			
+		// Add up the pair value with the other object if they are choosen too
+		Collections.sort(array);
+		for(int i = 0; i < counter; i++) {
+			for(int j = i+1; j < counter; j++) {
+				totalValue += qkPairValue[array.get(i)][array.get(j)];
 			}
 		}
 		
-		if(totalWieght > qkCapacity) 
-			return 0;
-		else
-			return totalValue;
+		return totalValue;
 	}
 	
 	// *** Untilities Methods ***
@@ -314,12 +316,12 @@ public class GA_Permutation {
 		}
 	}
 	
-	/*
 	private void printParentPool(){
 		System.out.println("*** Parent Pool ***");
 		for(int i = 0; i < parentSize; i++) {
 			System.out.print(i+"-Pop:" + parentPool[i] + "-");
-			System.out.print(populations[parentPool[i]]);
+			for(int j = 0; j < qkNumObjects; j++)
+				System.out.print(populations[parentPool[i]][j]);
 			System.out.println(" Fitness: " + popFitness[parentPool[i]]);
 		}
 	}
@@ -328,7 +330,8 @@ public class GA_Permutation {
 		System.out.println("*** Offspring Pool ***");
 		for(int i = 0; i < offspringSize; i++) {
 			System.out.print(i+"-");
-			System.out.print(offspringPool[i]);
+			for(int j = 0; j < qkNumObjects; j++)
+				System.out.print(offspringPool[i][j]);
 			System.out.println(" Fitness: " + getFitness(offspringPool[i]));
 		}
 	}
@@ -337,7 +340,8 @@ public class GA_Permutation {
 		System.out.println("*** Elitism Pool ***");
 		for(int i = 0; i < elitismSize; i++) {
 			System.out.print(i+"-");
-			System.out.print(elitismPool[i]);
+			for(int j = 0; j < qkNumObjects; j++)
+				System.out.print(elitismPool[i][j]);
 			System.out.println(" Fitness: " + getFitness(elitismPool[i]));
 		}
 	}
