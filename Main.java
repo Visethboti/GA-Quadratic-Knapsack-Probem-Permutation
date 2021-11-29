@@ -12,7 +12,7 @@ public class Main {
 	private static int qkCapacity;
 	private static int numObjects;
 	
-	private static final String problemFilName = "jeu_100_25_2.txt";
+	private static final String problemFilName = "test.txt";
 	
 	public static void main(String[] args) {
 		System.out.println("Main: Starting readProblem()");
@@ -30,10 +30,10 @@ public class Main {
 		double timeElapsed = (finished - start) / (double)1000;
 		System.out.println("It took " + timeElapsed + " seconds");
 		
-		String[] gaResult = ga_Binary.getFitnessStat();
-		String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
+		//String[] gaResult = ga_Permutation.getFitnessStat();
+		//String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
 		
-		printResultToCSV(outputData);
+		//printResultToCSV(outputData);
 	}
 	
 	private static void printResultToCSV(String[] outputData) {

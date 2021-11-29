@@ -1,7 +1,8 @@
 import java.lang.Math;
 import java.util.Random;
-
-
+import java.util.ArrayList;
+import java.util.Collections;
+	
 public class GA_Permutation {
 	private static Random random;
 	
@@ -11,10 +12,12 @@ public class GA_Permutation {
 	private final int qkCapacity;
 	private final int qkNumObjects;
 	
+	private ArrayList<Integer> permutationArray = new ArrayList<Integer>();
+	
 	private int numGenerationsToRun;
 	
 	// Parameters
-	private final int popsSize = 100;
+	private final int popsSize = 1;
 	private final double parentSizePercentage = 0.5; 
 	private final double offspringSizePercentage = 0.98;
 	private final double elitismSizePercentage = 0.02;
@@ -28,7 +31,7 @@ public class GA_Permutation {
 	private final int elitismSize = (int) (popsSize * elitismSizePercentage);
 	
 	// Initialization
-	private char[][] populations; // populations[][0][] is Value // populations[][1][] is Weight
+	private int[][] populations; // populations[][0][] is Value // populations[][1][] is Weight
 		
 	// Fitness Calculation
 	private int[] popFitness;
@@ -37,13 +40,13 @@ public class GA_Permutation {
 	private int[] parentPool;
 		
 	// Crossover
-	private char[][] offspringPool;
+	private int[][] offspringPool;
 		
 	// Elitism
-	private char[][] elitismPool;
+	private int[][] elitismPool;
 		
 	// New generation
-	private char[][] nextGenPopulation;
+	private int[][] nextGenPopulation;
 	
 	// *** Constructor ***
 	public GA_Permutation (int[][] qkValueWeight, int[][] qkPairValue, int qkCapacity, int numObjects) {
@@ -52,20 +55,29 @@ public class GA_Permutation {
 		this.qkCapacity = qkCapacity;
 		this.qkNumObjects = numObjects;
 		
-		this.populations = new char[popsSize][numObjects];
+		this.populations = new int[popsSize][numObjects];
 		this.popFitness = new int[popsSize];
 		this.parentPool = new int[parentSize];
-		this.offspringPool = new char[offspringSize][numObjects];
-		this.elitismPool = new char[elitismSize][numObjects];
-		this.nextGenPopulation = new char[popsSize][numObjects];
+		this.offspringPool = new int[offspringSize][numObjects];
+		this.elitismPool = new int[elitismSize][numObjects];
+		this.nextGenPopulation = new int[popsSize][numObjects];
 	
 		this.random = new Random();
+		
+		for(int i=0; i < qkNumObjects; i++)
+		{
+			permutationArray.add(i);
+		}
 	}
 	
 	// *** Run ***
 	public void runGA(int numGenerationsToRun){
 		this.numGenerationsToRun = numGenerationsToRun;
 		
+		
+		
+		initialization();
+		printPopulations();
 		
 		/*
 		int genCounter = 0;
@@ -99,29 +111,24 @@ public class GA_Permutation {
 		*/
 	}
 	
+	
 	// EA Methods
 	private void initialization(){
 		for(int i = 0; i < popsSize; i++) {
+			Collections.shuffle(permutationArray);	
 			// Only chromosome that fit in the knapsack capacity is allowed. The do while loop will run till one fit under capacity.
-			do {
-				for(int j = 0; j < qkNumObjects; j++) {
-					if(random.nextBoolean()) {
-						populations[i][j] = '1';
-					}
-					else {
-						populations[i][j] = '0';
-					}
-				}
-			} while(getFitness(populations[i]) == 0);
+			for(int j = 0; j < qkNumObjects; j++) {
+				populations[i][j] = permutationArray.get(j).intValue();
+			}
 		}
 	}
-	
 	private void fitnessCalculation(){
 		for(int i = 0; i < popsSize; i++) {
 			popFitness[i] = getFitness(populations[i]);
 		}
 	}
 	
+	/*
 	private void parentSelection(){ // K-tournament Selection
 		// clear Parent Pool
 		for(int i = 0; i < parentSize; i++) {
@@ -270,7 +277,7 @@ public class GA_Permutation {
 			}
 		}
 	}
-	
+	*/
 	// GA Untilities Methods
 	private int getFitness(char[] chromosome) {
 		int totalWieght = 0;
@@ -301,11 +308,13 @@ public class GA_Permutation {
 		System.out.println("*** Populations ***");
 		for(int i = 0; i < popsSize; i++) {
 			System.out.print(i+"-");
-			System.out.print(populations[i]);
+			for(int j = 0; j < qkNumObjects; j++)
+				System.out.print(populations[i][j]);
 			System.out.println(" Fitness: " + popFitness[i]);
 		}
 	}
 	
+	/*
 	private void printParentPool(){
 		System.out.println("*** Parent Pool ***");
 		for(int i = 0; i < parentSize; i++) {
