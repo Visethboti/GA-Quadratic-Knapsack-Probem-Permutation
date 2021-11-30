@@ -19,8 +19,8 @@ public class GA_Permutation {
 	// Parameters
 	private final int popsSize = 100;
 	private final double parentSizePercentage = 0.5; 
-	private final double offspringSizePercentage = 0.98;
-	private final double elitismSizePercentage = 0.02;
+	private final double offspringSizePercentage = 0.95;
+	private final double elitismSizePercentage = 0.05;
 	private final double mutationProbality = 0.005;
 	private final int kTournamentSize = 3;
 	
@@ -87,7 +87,6 @@ public class GA_Permutation {
 		// Initialization
 		initialization();
 		fitnessCalculation();
-		printPopulations();
 		
 		System.out.print("Gen:" + genCounter);
 		printFitnessStat();

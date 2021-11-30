@@ -18,26 +18,26 @@ public class Main {
 		System.out.println("Main: Starting readProblem()");
 		readProblem();
 		printProblemStat();
-		//printProblem();
+		printProblem();
 		
 		// Run GA
 		long start = System.currentTimeMillis();
 		
 		GA_Permutation ga_Permutation = new GA_Permutation(qkValueWeight, qkPairValue, qkCapacity, numObjects);
-		ga_Permutation.runGA(10000);
+		ga_Permutation.runGA(100);
 		
 		long finished = System.currentTimeMillis();
 		double timeElapsed = (finished - start) / (double)1000;
 		System.out.println("It took " + timeElapsed + " seconds");
 		
-		//String[] gaResult = ga_Permutation.getFitnessStat();
-		//String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
+		String[] gaResult = ga_Permutation.getFitnessStat();
+		String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
 		
-		//printResultToCSV(outputData);
+		printResultToCSV(outputData);
 	}
 	
 	private static void printResultToCSV(String[] outputData) {
-		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("jeu_100_25_2.csv"), true))) {
+		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("test.csv"), true))) {
 
 		      StringBuilder sb = new StringBuilder();
 		      sb.append(outputData[0]);
