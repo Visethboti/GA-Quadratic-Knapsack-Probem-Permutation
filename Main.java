@@ -24,7 +24,7 @@ public class Main {
 		long start = System.currentTimeMillis();
 		
 		GA_Permutation ga_Permutation = new GA_Permutation(qkValueWeight, qkPairValue, qkCapacity, numObjects);
-		ga_Permutation.runGA(1);
+		ga_Permutation.runGA(10000);
 		
 		long finished = System.currentTimeMillis();
 		double timeElapsed = (finished - start) / (double)1000;
@@ -37,7 +37,7 @@ public class Main {
 	}
 	
 	private static void printResultToCSV(String[] outputData) {
-		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("test.csv"), true))) {
+		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("jeu_100_25_2.csv"), true))) {
 
 		      StringBuilder sb = new StringBuilder();
 		      sb.append(outputData[0]);

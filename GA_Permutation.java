@@ -75,41 +75,39 @@ public class GA_Permutation {
 		this.numGenerationsToRun = numGenerationsToRun;
 		
 		
-		
-		//initialization();
-		//fitnessCalculation();
-		//printPopulations();
-		
+		/*
+		initialization();
+		fitnessCalculation();
+		printPopulations();
+		*/
 		
 		int genCounter = 0;
 		
-		System.out.println("GA_Binary: Start Running GA");
 		
 		// Initialization
-		System.out.println("GA_Binary: Start Initialization");
 		initialization();
-		System.out.println("GA_Binary: Start fitnessCalculation");
 		fitnessCalculation();
+		printPopulations();
 		
 		System.out.print("Gen:" + genCounter);
 		printFitnessStat();
 		
-		System.out.println("GA_Binary: Start Generational");
 		do {
 			parentSelection();
 			crossOver();
 			elitism();
 			replaceGeneration();
 			fitnessCalculation();
+			
 			mutation();
 			fitnessCalculation();
 			
 			genCounter++;
 			System.out.print("Gen:" + genCounter);
 			printFitnessStat();
+			//printPopulations();
 		}while(genCounter < numGenerationsToRun);
-		System.out.println("GA_Binary: Finished Generational");
-		
+		printPopulations();
 	}
 	
 	
@@ -157,23 +155,45 @@ public class GA_Permutation {
 		}
 	}
 	
-	private void crossOver(){
-		int randomNum1, randomNum2, randomPoint;
+	private void crossOver(){ // Order 1 Crossover
+		int randomParent1, randomParent2, randomPoint1, randomPoint2;
 		int[] newOffspring = new int[qkNumObjects];
 		for(int i = 0; i < offspringSize; i++) { // For each num of off spring required
-			randomNum1 = random.nextInt(parentSize); // Randomly pick two parent from the parentPool that is not the same
-			do {
-				randomNum2 = random.nextInt(parentSize);
-			}while(randomNum1 == randomNum2);
-			
-			// One point crossover
-			randomPoint = random.nextInt(qkNumObjects-1) + 1; // randomPoint between 1 to number of objects
-			
-			for(int j = 0; j < randomPoint; j++) {
-				newOffspring[j] = populations[parentPool[randomNum1]][j];
+			// clear newOffspring
+			for(int j = 0; j < qkNumObjects; j++) {
+				newOffspring[j] = -1;
 			}
-			for(int j = randomPoint; j < qkNumObjects; j++) {
-				newOffspring[j] = populations[parentPool[randomNum2]][j];
+			
+			
+			randomParent1 = random.nextInt(parentSize); // Randomly pick two parent from the parentPool that is not the same
+			do {
+				randomParent2 = random.nextInt(parentSize);
+			}while(randomParent1 == randomParent2);
+			
+			randomPoint1 = random.nextInt(qkNumObjects); // randomPoint 2 point of the chromosome
+			do {
+				randomPoint2 = random.nextInt(qkNumObjects);
+			}while(randomPoint1 == randomPoint2);
+			
+			//System.out.print(randomPoint1 + " --- " + randomPoint2);
+			
+			// Copy over from parent 1
+			for(int j = randomPoint1; j != randomPoint2; j++) {
+				newOffspring[j] = populations[parentPool[randomParent1]][j];
+				if(j+1 == qkNumObjects)
+					j = -1;
+			}
+			
+			// Copy over what left by order of and from parent 2
+			for(int j = randomPoint2; j != randomPoint1; j++) {
+				for(int k = 0; k < qkNumObjects; k++) {
+					if(notExistInArray(newOffspring, populations[parentPool[randomParent2]][k])) {
+						newOffspring[j] = populations[parentPool[randomParent2]][k];
+						break;
+					}
+				}
+				if(j+1 == qkNumObjects)
+					j = -1;
 			}
 			
 			// Add to offspring Pool
@@ -222,6 +242,7 @@ public class GA_Permutation {
 		return;
 	}
 	
+	
 	private void replaceGeneration(){
 		int counter = 0;
 		
@@ -244,6 +265,8 @@ public class GA_Permutation {
 	}
 	
 	private void mutation(){
+		if(mutationProbality == 0) {return;}
+		
 		double randomValue;
 		int randomBit1, randomBit2, temp;
 		int[] currentChromosome = new int[qkNumObjects];
