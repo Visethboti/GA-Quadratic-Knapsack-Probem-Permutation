@@ -17,10 +17,10 @@ public class GA_Permutation {
 	private int numGenerationsToRun;
 	
 	// Parameters
-	private final int popsSize = 100;
+	private final int popsSize = 500;
 	private final double parentSizePercentage = 0.5; 
-	private final double offspringSizePercentage = 0.95;
-	private final double elitismSizePercentage = 0.05;
+	private final double offspringSizePercentage = 0.98;
+	private final double elitismSizePercentage = 0.02;
 	private final double mutationProbality = 0.005;
 	private final int kTournamentSize = 3;
 	
@@ -103,10 +103,11 @@ public class GA_Permutation {
 			
 			genCounter++;
 			System.out.print("Gen:" + genCounter);
-			printFitnessStat();
+			//printFitnessStat();
 			//printPopulations();
 		}while(genCounter < numGenerationsToRun);
-		printPopulations();
+		//printPopulations();
+		printFitnessStat();
 	}
 	
 	

@@ -12,32 +12,34 @@ public class Main {
 	private static int qkCapacity;
 	private static int numObjects;
 	
-	private static final String problemFilName = "test.txt";
+	private static final String problemFilName = "jeu_200_25_2.txt";
 	
 	public static void main(String[] args) {
-		System.out.println("Main: Starting readProblem()");
-		readProblem();
-		printProblemStat();
-		printProblem();
-		
-		// Run GA
-		long start = System.currentTimeMillis();
-		
-		GA_Permutation ga_Permutation = new GA_Permutation(qkValueWeight, qkPairValue, qkCapacity, numObjects);
-		ga_Permutation.runGA(100);
-		
-		long finished = System.currentTimeMillis();
-		double timeElapsed = (finished - start) / (double)1000;
-		System.out.println("It took " + timeElapsed + " seconds");
-		
-		String[] gaResult = ga_Permutation.getFitnessStat();
-		String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
-		
-		printResultToCSV(outputData);
+		for(int i = 0 ; i < 10; i++) {
+			System.out.println("Main: Starting readProblem()");
+			readProblem();
+			printProblemStat();
+			//printProblem();
+			
+			// Run GA
+			long start = System.currentTimeMillis();
+			
+			GA_Permutation ga_Permutation = new GA_Permutation(qkValueWeight, qkPairValue, qkCapacity, numObjects);
+			ga_Permutation.runGA(250);
+			
+			long finished = System.currentTimeMillis();
+			double timeElapsed = (finished - start) / (double)1000;
+			System.out.println("It took " + timeElapsed + " seconds");
+			
+			String[] gaResult = ga_Permutation.getFitnessStat();
+			String[] outputData = {problemFilName, gaResult[0], gaResult[1], gaResult[2], Double.toString(timeElapsed)};
+			
+			printResultToCSV(outputData);
+		}
 	}
 	
 	private static void printResultToCSV(String[] outputData) {
-		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("test.csv"), true))) {
+		try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("Permutation_jeu_200_25_2.csv"), true))) {
 
 		      StringBuilder sb = new StringBuilder();
 		      sb.append(outputData[0]);
